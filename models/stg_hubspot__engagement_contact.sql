@@ -1,16 +1,19 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_engagement_enabled','hubspot_engagement_contact_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_engagement_contact',
+    enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_engagement_enabled','hubspot_engagement_contact_enabled'])
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__engagement_contact_tmp') }}
+    from {{ var('engagement_contact') }}
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__engagement_contact_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('engagement_contact')),
                 staging_columns=get_engagement_contact_columns()
             )
         }}
@@ -23,10 +26,8 @@ with base as (
         contact_id,
         engagement_id
     from macro
-    
+
 )
 
 select *
 from fields
-
-

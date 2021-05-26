@@ -1,17 +1,20 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_marketing_enabled', 'hubspot_contact_list_member_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_contact_list_member',
+    enabled=fivetran_utils.enabled_vars(['hubspot_marketing_enabled', 'hubspot_contact_list_member_enabled'])
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__contact_list_member_tmp') }}
-    where not coalesce(_fivetran_deleted, false) 
+    from {{ var('contact_list_member') }}
+    where not coalesce(_fivetran_deleted, false)
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__contact_list_member_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('contact_list_member')),
                 staging_columns=get_contact_list_member_columns()
             )
         }}
@@ -26,7 +29,7 @@ with base as (
         contact_id,
         contact_list_id
     from macro
-    
+
 )
 
 select *

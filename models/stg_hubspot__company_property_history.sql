@@ -1,4 +1,7 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_company_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_company_property_history',
+    enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_company_enabled'])
+) }}
 
 with base as (
 

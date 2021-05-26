@@ -1,16 +1,19 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_marketing_enabled','hubspot_email_event_enabled','hubspot_email_event_open_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_email_event_open',
+    enabled=fivetran_utils.enabled_vars(['hubspot_marketing_enabled','hubspot_email_event_enabled','hubspot_email_event_open_enabled'])
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__email_event_open_tmp') }}
+    from {{ var('email_event_open') }}
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__email_event_open_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('email_event_open')),
                 staging_columns=get_email_event_open_columns()
             )
         }}
@@ -27,10 +30,8 @@ with base as (
         location as geo_location,
         user_agent
     from macro
-    
+
 )
 
 select *
 from fields
-
-

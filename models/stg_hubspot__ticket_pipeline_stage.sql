@@ -1,9 +1,12 @@
-{{ config(enabled=var('hubspot_service_enabled', False)) }}
+{{ config(
+    alias='stg_hubspot_ticket_pipeline_stage',
+    enabled=var('hubspot_service_enabled', False)
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__ticket_pipeline_stage_tmp') }}
+    from {{ var('ticket_pipeline_stage') }}
 
 ),
 
@@ -12,7 +15,7 @@ fields as (
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__ticket_pipeline_stage_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('ticket_pipeline_stage')),
                 staging_columns=get_ticket_pipeline_stage_columns()
             )
         }}

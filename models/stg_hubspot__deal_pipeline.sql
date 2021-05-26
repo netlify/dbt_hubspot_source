@@ -1,17 +1,20 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_deal_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_deal_pipeline',
+    enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_deal_enabled'])
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__deal_pipeline_tmp') }}
-    where not coalesce(_fivetran_deleted, false) 
+    from {{ var('deal_pipeline') }}
+    where not coalesce(_fivetran_deleted, false)
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__deal_pipeline_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('deal_pipeline')),
                 staging_columns=get_deal_pipeline_columns()
             )
         }}
@@ -27,10 +30,8 @@ with base as (
         label as pipeline_label,
         pipeline_id as deal_pipeline_id
     from macro
-    
+
 )
 
 select *
 from fields
-
-

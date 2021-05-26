@@ -1,16 +1,19 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_engagement_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_engagement',
+    enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_engagement_enabled'])
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__engagement_tmp') }}
+    from {{ var('engagement') }}
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__engagement_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('engagement')),
                 staging_columns=get_engagement_columns()
             )
         }}
@@ -30,10 +33,8 @@ with base as (
         occurred_timestamp,
         engagement_type
     from macro
-    
+
 )
 
 select *
 from fields
-
-
