@@ -3,14 +3,14 @@
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__company_property_history_tmp') }}
+    from {{ var('company_property_history') }}
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__company_property_history_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('company_property_history')),
                 staging_columns=get_company_property_history_columns()
             )
         }}
@@ -27,7 +27,7 @@ with base as (
         change_timestamp,
         value as new_value
     from macro
-    
+
 )
 
 select *
