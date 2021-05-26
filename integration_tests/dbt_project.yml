@@ -12,4 +12,8 @@ vars:
   hubspot_source:
     hubspot_database: raw
     hubspot_schema: raw_fivetran_hubspot
-    hubspot_service_enabled: true
+    hubspot_service_enabled: false
+    hubspot_email_event_forward_enabled: false
+    hubspot_email_event_print_enabled: false
+    hubspot_engagement_call_enabled: false
+    hubspot_engagement_task_enabled: false
