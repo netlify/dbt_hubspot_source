@@ -1,16 +1,19 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_engagement_enabled','hubspot_engagement_task_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_engagement_task',
+    enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_engagement_enabled','hubspot_engagement_task_enabled'])
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__engagement_task_tmp') }}
+    from {{ var('engagement_task') }}
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__engagement_task_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('engagement_task')),
                 staging_columns=get_engagement_task_columns()
             )
         }}
@@ -31,10 +34,8 @@ with base as (
         subject as task_subject,
         task_type
     from macro
-    
+
 )
 
 select *
 from fields
-
-

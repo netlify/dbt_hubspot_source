@@ -1,17 +1,20 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_marketing_enabled', 'hubspot_contact_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_contact',
+    enabled=fivetran_utils.enabled_vars(['hubspot_marketing_enabled', 'hubspot_contact_enabled'])
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__contact_tmp') }}
-    where not coalesce(_fivetran_deleted, false) 
+    from {{ var('contact') }}
+    where not coalesce(_fivetran_deleted, false)
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__contact_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('contact')),
                 staging_columns=get_contact_columns()
             )
         }}
@@ -35,7 +38,7 @@ with base as (
         {{ fivetran_utils.fill_pass_through_columns('hubspot__contact_pass_through_columns') }}
 
     from macro
-    
+
 )
 
 select *

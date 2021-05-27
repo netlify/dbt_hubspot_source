@@ -1,16 +1,19 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_marketing_enabled','hubspot_email_event_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_email_campaign',
+    enabled=fivetran_utils.enabled_vars(['hubspot_marketing_enabled','hubspot_email_event_enabled'])
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__email_campaign_tmp') }}
+    from {{ var('email_campaign') }}
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__email_campaign_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('email_campaign')),
                 staging_columns=get_email_campaign_columns()
             )
         }}
@@ -31,10 +34,8 @@ with base as (
         subject as email_campaign_subject,
         type as email_campaign_type
     from macro
-    
+
 )
 
 select *
 from fields
-
-

@@ -1,16 +1,19 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_owner_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_owner',
+    enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_owner_enabled'])
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__owner_tmp') }}
+    from {{ var('owner') }}
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__owner_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('owner')),
                 staging_columns=get_owner_columns()
             )
         }}
@@ -30,10 +33,8 @@ with base as (
         updated_at as updated_timestamp,
         trim( {{ dbt_utils.concat(['first_name', "' '", 'last_name']) }} ) as full_name
     from macro
-    
+
 )
 
 select *
 from fields
-
-

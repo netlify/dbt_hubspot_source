@@ -1,16 +1,19 @@
-{{ config(enabled=var('hubspot_service_enabled', False)) }}
+{{ config(
+    alias='stg_hubspot_ticket_deal',
+    enabled=var('hubspot_service_enabled', False)
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__ticket_deal_tmp') }}
+    from {{ var('ticket_deal') }}
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__ticket_deal_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('ticket_deal')),
                 staging_columns=get_ticket_deal_columns()
             )
         }}

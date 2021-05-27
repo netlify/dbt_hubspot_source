@@ -1,9 +1,12 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_deal_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_deal_stage',
+    enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_deal_enabled'])
+) }}
 
 with base as (
 
-    select * 
-    from {{ ref('stg_hubspot__deal_stage_tmp') }}
+    select *
+    from {{ var('deal_stage') }}
 
 ),
 
@@ -12,17 +15,17 @@ fields as (
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__deal_stage_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('deal_stage')),
                 staging_columns=get_deal_stage_columns()
             )
         }}
-        
+
     from base
 ),
 
 final as (
-    
-    select 
+
+    select
         date_entered,
         deal_id,
         source,
@@ -34,5 +37,5 @@ final as (
     from fields
 )
 
-select * 
+select *
 from final

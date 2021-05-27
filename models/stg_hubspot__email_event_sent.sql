@@ -1,16 +1,19 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_marketing_enabled','hubspot_email_event_enabled','hubspot_email_event_sent_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_email_event_sent',
+    enabled=fivetran_utils.enabled_vars(['hubspot_marketing_enabled','hubspot_email_event_enabled','hubspot_email_event_sent_enabled'])
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__email_event_sent_tmp') }}
+    from {{ var('email_event_sent') }}
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__email_event_sent_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('email_event_sent')),
                 staging_columns=get_email_event_sent_columns()
             )
         }}
@@ -27,7 +30,7 @@ with base as (
         reply_to as reply_to_email,
         subject as email_subject
     from macro
-    
+
 )
 
 select *

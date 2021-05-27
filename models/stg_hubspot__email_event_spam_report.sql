@@ -1,16 +1,19 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_marketing_enabled','hubspot_email_event_enabled','hubspot_email_event_spam_report_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_email_event_spam_report',
+    enabled=fivetran_utils.enabled_vars(['hubspot_marketing_enabled','hubspot_email_event_enabled','hubspot_email_event_spam_report_enabled'])
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__email_event_spam_report_tmp') }}
+    from {{ var('email_event_spam_report') }}
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__email_event_spam_report_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('email_event_spam_report')),
                 staging_columns=get_email_event_spam_report_columns()
             )
         }}
@@ -24,10 +27,8 @@ with base as (
         ip_address,
         user_agent
     from macro
-    
+
 )
 
 select *
 from fields
-
-

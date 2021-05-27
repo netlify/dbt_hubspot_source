@@ -1,16 +1,19 @@
-{{ config(enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_engagement_enabled','hubspot_engagement_email_enabled'])) }}
+{{ config(
+    alias='stg_hubspot_engagement_email',
+    enabled=fivetran_utils.enabled_vars(['hubspot_sales_enabled','hubspot_engagement_enabled','hubspot_engagement_email_enabled'])
+) }}
 
 with base as (
 
     select *
-    from {{ ref('stg_hubspot__engagement_email_tmp') }}
+    from {{ var('engagement_email') }}
 
 ), macro as (
 
     select
         {{
             fivetran_utils.fill_staging_columns(
-                source_columns=adapter.get_columns_in_relation(ref('stg_hubspot__engagement_email_tmp')),
+                source_columns=adapter.get_columns_in_relation(var('engagement_email')),
                 staging_columns=get_engagement_email_columns()
             )
         }}
@@ -45,10 +48,8 @@ with base as (
         tracker_key,
         validation_skipped
     from macro
-    
+
 )
 
 select *
 from fields
-
-
