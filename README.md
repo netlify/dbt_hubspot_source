@@ -2,7 +2,7 @@
 
 This package models Hubspot data from [Fivetran's connector](https://fivetran.com/docs/applications/hubspot). It uses data in the format described by the [marketing](https://fivetran.com/docs/applications/hubspot#schemainformation), [sales](https://fivetran.com/docs/applications/hubspot#crmandsaleshubschema) and [service](https://fivetran.com/docs/applications/hubspot#servicehubschema) ERDs.
 
-This package enriches your Fivetran data by doing the following:
+This package enriches your Fivetran data by doing the following
 
 * Adds descriptions to tables and columns that are synced using Fivetran
 * Adds column-level testing where applicable. For example, all primary keys are tested for uniqueness and non-null values.
